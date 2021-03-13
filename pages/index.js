@@ -1,8 +1,10 @@
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { useToast } from '../hooks/useToast';
 
 export default function Home() {
+  const toast = useToast();
   const { register, handleSubmit, errors, reset } = useForm();
   const router = useRouter();
   async function onSubmitForm(values) {
@@ -20,11 +22,12 @@ export default function Home() {
       console.log(response);
       if (response.status == 200) {
         reset();
-        router.push('/');
+        toast(
+          'success',
+          'Thank you for contacting us, we will be in touch soon.'
+        );
       }
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) {}
   }
 
   return (

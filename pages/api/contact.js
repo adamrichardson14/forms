@@ -13,19 +13,19 @@ export default async (req, res) => {
   });
 
   try {
-    const emailRes = await transporter.sendMail({
-      from: email,
-      to: 'adaamr@gmail.com',
-      subject: `Contact form submission from ${name}`,
-      html: `<p>You have a new contact form submission</p><br>
-      <p><strong>Name: </strong> ${name} </p><br>
-      <p><strong>Phone: </strong> ${phone} </p><br>
-      <p><strong>Message: </strong> ${message} </p><br>
-      
-      `,
-    });
+    // const emailRes = await transporter.sendMail({
+    //   from: email,
+    //   to: 'adaamr@gmail.com',
+    //   subject: `Contact form submission from ${name}`,
+    //   html: `<p>You have a new contact form submission</p><br>
+    //   <p><strong>Name: </strong> ${name} </p><br>
+    //   <p><strong>Phone: </strong> ${phone} </p><br>
+    //   <p><strong>Message: </strong> ${message} </p><br>
 
-    console.log('Message Sent', emailRes.messageId);
+    //   `,
+    // });
+
+    console.log('Message Sent');
   } catch (err) {
     console.log(err);
   }
