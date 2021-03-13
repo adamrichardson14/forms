@@ -1,54 +1,134 @@
-import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 export default function Home() {
+  const { register, handleSubmit, errors, reset } = useForm();
+  const router = useRouter();
+  async function onSubmitForm(values) {
+    let config = {
+      method: 'post',
+      url: `${process.env.NEXT_PUBLIC_API_URL}/api/contact`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: values,
+    };
+
+    try {
+      const response = await axios(config);
+      console.log(response);
+      if (response.status == 200) {
+        reset();
+        router.push('/');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <div className="b py-16 bg-gray-50 px-4 sm:px-6 h-screen w-screen flex justify-center items-center">
       <div className="mx-auto w-full max-w-2xl rounded-xl bg-white p-8 shadow">
-        <h1 className="text-2xl text-gray-900 py-4 font-bold">Contact Us</h1>
-        <form className="grid grid-cols-1 gap-y-6">
+        <form
+          onSubmit={handleSubmit(onSubmitForm)}
+          className="grid grid-cols-1 gap-y-6">
           <div>
-            <label htmlFor="name" className="sr-only">
+            <label for="name" className="sr-only">
               Full name
             </label>
             <input
               type="text"
               name="name"
-              className="block w-full shadow py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              ref={register({
+                required: {
+                  value: true,
+                  message: 'You must enter your name',
+                },
+              })}
+              className={`block w-full shadow py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 ${
+                errors.name ? 'ring-2 ring-red-500' : null
+              }`}
               placeholder="Full name"
             />
+            <span className="text-red-400 text-sm py-2">
+              {errors?.name?.message}
+            </span>
           </div>
           <div>
-            <label htmlFor="email" className="sr-only">
+            <label for="email" className="sr-only">
               Email
             </label>
             <input
               name="email"
-              type="email"
-              className="block w-full shadow py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              type="text"
+              ref={register({
+                required: {
+                  value: true,
+                  message: 'You must enter your email address',
+                },
+                minLength: {
+                  value: 8,
+                  message: 'This is not long enough to be an email',
+                },
+                maxLength: {
+                  value: 120,
+                  message: 'This is too long',
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'This needs to be a valid email address',
+                },
+              })}
+              className={`block w-full shadow py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 ${
+                errors.email ? 'ring-2 ring-red-500' : null
+              }`}
               placeholder="Email"
             />
+            <span className="text-red-400 text-sm py-2">
+              {errors?.email?.message}
+            </span>
           </div>
           <div>
-            <label htmlFor="phone" className="sr-only">
+            <label for="phone" className="sr-only">
               Phone
             </label>
             <input
               type="text"
               name="phone"
+              ref={register}
               className="block w-full shadow py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md focus:outline-none focus:ring-2"
               placeholder="Phone"
             />
           </div>
           <div>
-            <label htmlFor="message" className="sr-only">
+            <label for="message" className="sr-only">
               Message
             </label>
             <textarea
               name="message"
               rows="4"
-              className="block w-full shadow py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              ref={register({
+                required: {
+                  value: true,
+                  message: 'You need to enter your message',
+                },
+                maxLength: {
+                  value: 1000,
+                  message: "Your message can't be more than 1000 characters",
+                },
+                minLength: {
+                  value: 50,
+                  message: 'Your message must be longer than this!',
+                },
+              })}
+              className={`block w-full shadow py-3 px-4 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 ${
+                errors.message ? 'ring-2 ring-red-500' : null
+              }`}
               placeholder="Message"></textarea>
+            <span className="text-red-400 text-sm py-2">
+              {errors?.message?.message}
+            </span>
           </div>
           <div>
             <button
